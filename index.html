@@ -159,8 +159,8 @@ html,body{height:100%;overflow:hidden;background:#1a1a2e;}
 .pin-l{background:var(--g200);color:var(--g400);}
 @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 .dc-info{flex:1;}
-.dc-info h4{font-size:13px;font-weight:800;color:var(--g800);}
-.dc-info p{font-size:11px;color:var(--g400);}
+.dc-info h4{font-size:16px;font-weight:800;color:var(--g800);}
+.dc-info p{font-size:12px;color:var(--g400);}
 .dc-tag{padding:4px 10px;border-radius:50px;font-size:11px;font-weight:800;white-space:nowrap;}
 .t-d{background:#D1FAE5;color:#065F46;}
 .t-s{background:#FEF3C7;color:#92400E;}
@@ -1225,8 +1225,6 @@ function openQrScanner(lid){
 function onQrInput(input){
   const val=input.value.trim().toUpperCase();
   document.getElementById('qr-submit-btn').disabled=val.length<4;
-  // Auto-submit when length matches a Plus Code (7+ chars with +)
-  if(val.length>=7 && val.includes('+')) handleQrResult(val);
 }
 
 function toggleQrCamera(){
