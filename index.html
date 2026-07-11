@@ -650,8 +650,8 @@ const LANDMARKS = {
 
 const ROUTES = [
   {id:'demo',name:'🎪 Expo Demo Route',area:'demo',emoji:'🎪',color:'#6C3CE1',bg:'#EDE9FE',desc:'Enter the Plus Code from each location card to unlock Mumbai landmarks',landmarks:['demo-1','demo-2','demo-3','demo-4'],isDemo:true},
-  {id:'matunga',name:'Kings Circle Loop',area:'central',emoji:'☕',color:'#92400E',bg:'#FFF7ED',desc:'Matunga — food, cafés & schools',landmarks:['koolar','don-bosco','anand-bhavan','shishuvan']},
   {id:'matunga-sim',name:'🎭 Kings Circle (Simulation)',area:'demo',emoji:'🎭',color:'#6C3CE1',bg:'#EDE9FE',desc:'Full Kings Circle experience — no GPS needed. Tap to simulate arriving at each spot.',landmarks:['koolar','don-bosco','anand-bhavan','shishuvan'],isSimulation:true},
+  {id:'matunga',name:'Kings Circle Loop',area:'central',emoji:'☕',color:'#92400E',bg:'#FFF7ED',desc:'Matunga — food, cafés & schools',landmarks:['koolar','don-bosco','anand-bhavan','shishuvan']},
   {id:'worli-shishuvan',name:'Worli Naka → Shishuvan',area:'central',emoji:'🛕',color:'#F97316',bg:'#FFF7ED',desc:'Prabhadevi · Dadar · Matunga',landmarks:['croma-century','siddhivinayak','portugese-church','plaza-cinema','dadar-tt','maheshwari-udyan','shishuvan']},
   {id:'shishuvan-worli',name:'Shishuvan → Worli Naka',area:'central',emoji:'🏫',color:'#22C55E',bg:'#F0FDF4',desc:'Matunga · Dadar · Prabhadevi',landmarks:['shishuvan','maheshwari-udyan','dadar-tt','plaza-garden','hanuman-mandir','portugese-church','croma-century']},
   {id:'highway-test',name:'Highway Test',area:'central',emoji:'🛣️',color:'#3B82F6',bg:'#E0F2FE',desc:'Chembur → Sion driving test route',landmarks:['medplus-shellcolony','vasantdada-engg','sion-circle','ltmg-hospital','sion-police']},
@@ -1574,6 +1574,14 @@ function resetCurrentRoute(){
   if(!currentRoute) return;
   resetRoute(currentRoute);
   sessionXP=0;
+  const btn=document.getElementById('btn-reset-link');
+  btn.textContent='✅ Reset! Tap Let\'s Go to start fresh';
+  btn.style.color='#4ADE80';
+  setTimeout(()=>{
+    btn.textContent='🔄 Reset & start fresh';
+    btn.style.color='';
+    btn.style.display='none';
+  }, 2000);
 }
 
 function showComplete(){
