@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
@@ -152,6 +153,65 @@
     font-family:'Baloo 2', sans-serif; font-weight:700; font-size:15px; color:#fff; opacity:0.85;
   }
   .badge img{ width:22px; height:22px; border-radius:50%; }
+  /* ===== Mobile responsive ===== */
+  @media (max-width: 700px), (max-height: 500px) and (orientation: landscape){
+    .content-row, .content-row.reverse{
+      flex-direction:column-reverse;
+      gap:22px;
+      width:92%;
+    }
+    .text-block{
+      max-width:100%;
+      text-align:center;
+    }
+    .headline{
+      font-size:clamp(24px, 6.5vw, 32px);
+      line-height:1.2;
+      margin-bottom:10px;
+    }
+    .subline{
+      font-size:clamp(13px, 3.6vw, 15px);
+    }
+    .phone-wrap{
+      width:auto;
+    }
+    .phone-wrap img{
+      width:min(58vw, 190px);
+    }
+    .brand{ justify-content:center; margin-bottom:16px; }
+    .brand span{ font-size:18px; }
+
+    .badge{
+      top:16px; left:16px; font-size:12px;
+    }
+    .badge img{ width:18px; height:18px; }
+
+    .logo-circle{
+      width:120px; height:120px; margin-bottom:18px;
+    }
+    .logo-circle img{ width:82px; }
+    .tagline{
+      font-size:13px; max-width:280px; padding:0 12px;
+    }
+    .cta .url{
+      font-size:clamp(22px, 7vw, 30px);
+    }
+    .cta .sub{ font-size:13px; }
+    .pill{ font-size:14px; padding:10px 24px; }
+
+    .dots{ bottom:18px; }
+    .dot{ width:6px; height:6px; }
+    .dot.on{ width:16px; }
+
+    .stage{ padding: 0 4px; }
+  }
+
+  @media (max-width: 380px){
+    .headline{ font-size:22px; }
+    .phone-wrap img{ width:52vw; }
+    .logo-circle{ width:100px; height:100px; }
+    .logo-circle img{ width:68px; }
+  }
 </style>
 </head>
 <body>
