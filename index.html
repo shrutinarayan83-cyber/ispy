@@ -159,8 +159,8 @@ html,body{height:100%;overflow:hidden;background:#1a1a2e;}
 .pin-l{background:var(--g200);color:var(--g400);}
 @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 .dc-info{flex:1;}
-.dc-info h4{font-size:16px;font-weight:800;color:var(--g800);}
-.dc-info p{font-size:12px;color:var(--g400);}
+.dc-info h4{font-size:13px;font-weight:800;color:var(--g800);}
+.dc-info p{font-size:11px;color:var(--g400);}
 .dc-tag{padding:4px 10px;border-radius:50px;font-size:11px;font-weight:800;white-space:nowrap;}
 .t-d{background:#D1FAE5;color:#065F46;}
 .t-s{background:#FEF3C7;color:#92400E;}
@@ -264,6 +264,8 @@ html,body{height:100%;overflow:hidden;background:#1a1a2e;}
 .badge-unlocked .bu-list{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
 .bu-badge{background:rgba(255,255,255,0.2);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:800;color:var(--wh);}
 .btn-explore{background:var(--wh);color:var(--gnd);border:none;border-radius:50px;padding:14px 40px;font-family:var(--font);font-size:15px;font-weight:900;cursor:pointer;}
+.btn-play-again{background:linear-gradient(135deg,#FBBF24,#F97316);color:#7C2D12;border:none;border-radius:50px;padding:14px 40px;font-family:var(--font);font-size:15px;font-weight:900;cursor:pointer;margin-top:10px;}
+.btn-reset-link{background:none;border:none;color:rgba(255,255,255,0.5);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;text-decoration:underline;margin-top:8px;}
 
 /* ── NOTIFICATION ── */
 .notif{position:absolute;top:12px;left:12px;right:12px;background:var(--wh);border-radius:16px;padding:12px 14px;box-shadow:0 8px 30px rgba(0,0,0,0.18);z-index:999;display:none;border-left:4px solid var(--pu);animation:slideDown 0.4s ease;}
@@ -428,6 +430,7 @@ html,body{height:100%;overflow:hidden;background:#1a1a2e;}
   </div>
   <button class="btn-start" onclick="startCountdown()">Let's Go! 🚀</button>
   <button class="btn-back-link" onclick="goLanding('s-explore')">← Back to Explore</button>
+  <button class="btn-reset-link" id="btn-reset-link" onclick="resetCurrentRoute()" style="display:none;">🔄 Reset & start fresh</button>
 </div>
 
 <!-- COUNTDOWN -->
@@ -504,7 +507,7 @@ html,body{height:100%;overflow:hidden;background:#1a1a2e;}
   <div class="qr-hdr">
     <button class="qr-back" onclick="closeQrScanner()">← Back</button>
     <h2>⌨️ Enter Plus Code</h2>
-    <p id="qr-target-name">Find the card for this location</p>
+    <p id="qr-target-name" style="font-size:18px;font-weight:900;color:white;margin-top:4px;">Find the card for this location</p>
   </div>
   <div class="qr-code-entry">
     <div style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);border-radius:14px;padding:14px 16px;width:100%;text-align:center;margin-bottom:4px;">
@@ -581,6 +584,7 @@ html,body{height:100%;overflow:hidden;background:#1a1a2e;}
     <div class="bu-list" id="cs-badge-list"></div>
   </div>
   <button class="btn-explore" onclick="finishRoute()">Back to Explore</button>
+  <button class="btn-play-again" id="btn-play-again" onclick="resetAndPlayAgain()" style="display:none;">🔄 Play Again</button>
 </div>
 
 </div><!-- #app -->
@@ -779,6 +783,14 @@ function openRouteIntro(r){
   document.getElementById('ri-desc').textContent=r.desc;
   document.getElementById('ri-missions').textContent=r.landmarks.length;
   document.getElementById('ri-xp').textContent='~'+totalXP;
+  // Show reset link for demo/sim routes that have prior progress
+  const resetBtn=document.getElementById('btn-reset-link');
+  const hasPriorProgress=r.landmarks.some(lid=>STATE.visited.includes(lid));
+  if((r.isDemo||r.isSimulation)&&hasPriorProgress){
+    resetBtn.style.display='block';
+  } else {
+    resetBtn.style.display='none';
+  }
   showScreen('s-route-intro');
 }
 
@@ -1535,6 +1547,35 @@ function showResult(correct,lm,skipped=false){
 // ROUTE COMPLETE
 // ═══════════════════════════════════════════════
 
+function resetRoute(route){
+  // Clear all spot statuses for this route
+  route.landmarks.forEach(lid=>{ delete STATE.visited.splice(STATE.visited.indexOf(lid),1); });
+  STATE.visited = STATE.visited.filter(lid=>!route.landmarks.includes(lid));
+  // Remove from completed routes
+  STATE.routesCompleted = STATE.routesCompleted.filter(id=>id!==route.id);
+  saveState();
+  spotStatus={};
+  route.landmarks.forEach(lid=>{ spotStatus[lid]='locked'; });
+  // First spot active for demo/simulation
+  if(route.isDemo||route.isSimulation){
+    const first=route.landmarks[0];
+    if(first) spotStatus[first]='active';
+  }
+}
+
+function resetAndPlayAgain(){
+  if(!currentRoute) return;
+  resetRoute(currentRoute);
+  sessionXP=0;
+  startCountdown();
+}
+
+function resetCurrentRoute(){
+  if(!currentRoute) return;
+  resetRoute(currentRoute);
+  sessionXP=0;
+}
+
 function showComplete(){
   if(currentRoute&&!STATE.routesCompleted.includes(currentRoute.id)){
     STATE.routesCompleted.push(currentRoute.id);STATE.routesDone++;saveState();
@@ -1550,6 +1591,13 @@ function showComplete(){
   } else badgeWrap.style.display='none';
   showScreen('s-complete');
   launchConfetti();
+  // Show Play Again for demo and simulation routes
+  const playAgainBtn = document.getElementById('btn-play-again');
+  if(currentRoute&&(currentRoute.isDemo||currentRoute.isSimulation)){
+    playAgainBtn.style.display='block';
+  } else {
+    playAgainBtn.style.display='none';
+  }
 }
 
 function finishRoute(){
